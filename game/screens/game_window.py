@@ -258,7 +258,6 @@ class MainView(arcade.View):
 
 
 class LevelView(arcade.View):
-    """Окно выбора уровня (1, 2, 3) с горизонтальным расположением кнопок"""
 
     def __init__(self):
         super().__init__()
@@ -288,13 +287,13 @@ class LevelView(arcade.View):
             "level1": False,
             "level2": False,
             "level3": False,
-            "exit": False
+            "back": False
         }
 
         # Анимационные переменные
         self.buttons_appear_start = 0.0
         self.buttons_appear_progress = 0.0
-        self.buttons_appear_duration = 0.7
+        self.buttons_appear_duration = 0.5
 
     def on_show(self):
         arcade.set_background_color(arcade.color.BLACK)
@@ -318,7 +317,7 @@ class LevelView(arcade.View):
                                                   draw_width,
                                                   draw_height))
 
-        # Рисуем цепи (статично, без анимации)
+        # Рисуем цепи
         if self.chains_loaded:
             chain_height = self.window.height * 0.9
 
@@ -373,19 +372,20 @@ class LevelView(arcade.View):
                                          alpha=alpha)
 
         # Кнопка "Назад"
-        back_btn_y = btn_height * 1.5
-        back_btn_width = self.back_btn.width * (btn_height / self.back_btn.height)
+        back_btn_height = self.window.height / 12
+        back_btn_y = back_btn_height * 1.2
+        back_btn_width = self.back_btn.width * (back_btn_height / self.back_btn.height)
 
         back_scale = 1.0
         back_alpha = 255
         if self.buttons_appear_progress < 1.0:
-            back_progress = max(0, (self.buttons_appear_progress - 0.5) * 2)
+            back_progress = max(0, (self.buttons_appear_progress - 0.3) * 1.4)
             back_scale = back_progress
             back_alpha = int(255 * back_progress)
 
-        if self.buttons_hover["exit"] and self.buttons_appear_progress >= 1.0:
+        if self.buttons_hover["back"] and self.buttons_appear_progress >= 1.0:
             arcade.draw_rectangle_filled(self.window.width // 2, back_btn_y,
-                                         back_btn_width * 1.1 * back_scale, btn_height * 1.1 * back_scale,
+                                         back_btn_width * 1.1 * back_scale, back_btn_height * 1.1 * back_scale,
                                          arcade.color.GRAY + (100,))
 
         if back_scale > 0:
@@ -393,7 +393,7 @@ class LevelView(arcade.View):
                                      arcade.rect.XYWH(self.window.width // 2,
                                                       back_btn_y,
                                                       back_btn_width * back_scale,
-                                                      btn_height * back_scale),
+                                                      back_btn_height * back_scale),
                                      alpha=back_alpha)
 
     def on_update(self, delta_time):
@@ -422,14 +422,15 @@ class LevelView(arcade.View):
                 self.buttons_hover[btn_type] = False
 
         # Кнопка "Назад"
-        back_btn_y = btn_height * 1.5
-        back_btn_width = self.back_btn.width * (btn_height / self.back_btn.height)
+        back_btn_height = self.window.height / 12
+        back_btn_y = back_btn_height * 1.2
+        back_btn_width = self.back_btn.width * (back_btn_height / self.back_btn.height)
 
         if (self.window.width // 2 - back_btn_width // 2 < x < self.window.width // 2 + back_btn_width // 2 and
-                back_btn_y - btn_height // 2 < y < back_btn_y + btn_height // 2):
-            self.buttons_hover["exit"] = True
+                back_btn_y - back_btn_height // 2 < y < back_btn_y + back_btn_height // 2):
+            self.buttons_hover["back"] = True
         else:
-            self.buttons_hover["exit"] = False
+            self.buttons_hover["back"] = False
 
     def on_mouse_press(self, x, y, button, modifiers):
         if self.buttons_appear_progress < 1.0:
@@ -452,11 +453,12 @@ class LevelView(arcade.View):
                     # Здесь будет переход к игре на выбранном уровне
 
             # Проверка нажатия на кнопку "Назад"
-            back_btn_y = btn_height * 1.5
-            back_btn_width = self.back_btn.width * (btn_height / self.back_btn.height)
+            back_btn_height = self.window.height / 12
+            back_btn_y = back_btn_height * 1.2
+            back_btn_width = self.back_btn.width * (back_btn_height / self.back_btn.height)
 
             if (self.window.width // 2 - back_btn_width // 2 < x < self.window.width // 2 + back_btn_width // 2 and
-                    back_btn_y - btn_height // 2 < y < back_btn_y + btn_height // 2):
+                    back_btn_y - back_btn_height // 2 < y < back_btn_y + back_btn_height // 2):
                 main_view = MainView()
                 self.window.show_view(main_view)
 
